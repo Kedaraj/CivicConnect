@@ -1,5 +1,5 @@
 // ─── CivicConnect API Service ─────────────────────────────────────────────────
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+const API_BASE = import.meta.env.VITE_API_URL || "https://civicconnect-backend-63db.onrender.com/api";
 
 class ApiService {
   private token: string | null = localStorage.getItem("cc_token");
