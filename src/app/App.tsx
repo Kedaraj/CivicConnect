@@ -169,7 +169,7 @@ function AccidentsMapView({ full = false }: { full?: boolean }) {
     }
     const pc: Record<string,string> = { high: '#EF4444', medium: '#F97316', low: '#22C55E' };
     const te: Record<string,string> = { accident: '\ud83d\ude97', traffic_jam: '\ud83d\udea6', pothole: '\ud83d\udd73\ufe0f', road_damage: '\ud83d\udee3\ufe0f', waterlogging: '\ud83c\udf0a', illegal_parking: '\ud83c\udd7f\ufe0f' };
-    fetch('http://localhost:3001/api/incidents').then(r => r.json()).then((data: any) => {
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/incidents`).then(r => r.json()).then((data: any) => {
       const list = Array.isArray(data) ? data : data.incidents || data.data || [];
       const pts: [number,number][] = [];
       list.forEach((inc: any) => {
@@ -237,7 +237,7 @@ function ReportedIncidentMap() {
     const typeEmoji: Record<string,string> = { accident: '🚗', traffic_jam: '🚦', pothole: '🕳️', road_damage: '🛣️', waterlogging: '🌊', illegal_parking: '🅿️' };
     const prioColor: Record<string,string> = { high: '#EF4444', medium: '#F97316', low: '#22C55E' };
 
-    fetch('http://localhost:3001/api/incidents')
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/incidents`)
       .then(r => r.json())
       .then((data: any) => {
         const list = Array.isArray(data) ? data : data.incidents || data.data || [];
