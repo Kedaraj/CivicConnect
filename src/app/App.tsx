@@ -169,7 +169,7 @@ function AccidentsMapView({ full = false }: { full?: boolean }) {
     }
     const pc: Record<string,string> = { high: '#EF4444', medium: '#F97316', low: '#22C55E' };
     const te: Record<string,string> = { accident: '\ud83d\ude97', traffic_jam: '\ud83d\udea6', pothole: '\ud83d\udd73\ufe0f', road_damage: '\ud83d\udee3\ufe0f', waterlogging: '\ud83c\udf0a', illegal_parking: '\ud83c\udd7f\ufe0f' };
-    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/incidents`).then(r => r.json()).then((data: any) => {
+    fetch(`${import.meta.env.VITE_API_URL || 'https://civicconnect-backend-nuz1.onrender.com/api'}/incidents`).then(r => r.json()).then((data: any) => {
       const list = Array.isArray(data) ? data : data.incidents || data.data || [];
       const pts: [number,number][] = [];
       list.forEach((inc: any) => {
@@ -237,7 +237,7 @@ function ReportedIncidentMap() {
     const typeEmoji: Record<string,string> = { accident: '🚗', traffic_jam: '🚦', pothole: '🕳️', road_damage: '🛣️', waterlogging: '🌊', illegal_parking: '🅿️' };
     const prioColor: Record<string,string> = { high: '#EF4444', medium: '#F97316', low: '#22C55E' };
 
-    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/incidents`)
+    fetch(`${import.meta.env.VITE_API_URL || 'https://civicconnect-backend-nuz1.onrender.com/api'}/incidents`)
       .then(r => r.json())
       .then((data: any) => {
         const list = Array.isArray(data) ? data : data.incidents || data.data || [];
@@ -1152,7 +1152,7 @@ function ReportsScreen() {
         };
         try {
           // Try creating alerts (requires police/admin token — will work if logged in as such)
-          await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3001/api"}/alerts`, {
+          await fetch(`${import.meta.env.VITE_API_URL || "https://civicconnect-backend-nuz1.onrender.com/api"}/alerts`, {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...alertBase, type: "emergency" })
           });
@@ -1715,7 +1715,7 @@ function EmergencyScreen({ setTab }: { setTab: (t: MainTab) => void }) {
       };
       const roles = ["police", "ambulance", "emergency"];
       await Promise.all(roles.map(type =>
-        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/alerts`, {
+        fetch(`${import.meta.env.VITE_API_URL || 'https://civicconnect-backend-nuz1.onrender.com/api'}/alerts`, {
           method: "POST",
           headers: { "Content-Type": "application/json", ...(localStorage.getItem('cc_token') ? { Authorization: `Bearer ${localStorage.getItem('cc_token')}` } : {}) },
           body: JSON.stringify({ ...alertBase, type })

@@ -58,7 +58,7 @@ export function AmbulanceDashboard({ setTab }: { setTab: (t: any) => void }) {
   // Socket.IO for real-time notifications
   useEffect(() => {
     const token = localStorage.getItem('cc_token');
-    const socketUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:3001';
+    const socketUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'https://civicconnect-backend-nuz1.onrender.com';
     
     const socket = io(socketUrl);
     socketRef.current = socket;
@@ -107,7 +107,7 @@ export function AmbulanceDashboard({ setTab }: { setTab: (t: any) => void }) {
     setLoading(true);
     try {
       const token = localStorage.getItem('cc_token');
-      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+      const apiBase = import.meta.env.VITE_API_URL || 'https://civicconnect-backend-nuz1.onrender.com/api';
       
       const [emergenciesRes, statsRes] = await Promise.all([
         fetch(`${apiBase}/ambulance/emergencies`, {
@@ -139,7 +139,7 @@ export function AmbulanceDashboard({ setTab }: { setTab: (t: any) => void }) {
   const handleAction = async (id: string, action: string) => {
     try {
       const endpoint = action === 'dispatch' ? 'dispatch' : action === 'arrive' ? 'arrive' : 'resolve';
-      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+      const apiBase = import.meta.env.VITE_API_URL || 'https://civicconnect-backend-nuz1.onrender.com/api';
       
       const res = await fetch(`${apiBase}/incidents/${id}/${endpoint}`, {
         method: 'PATCH',
