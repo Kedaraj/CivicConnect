@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="100" fill="#111"/>
+  <text x="256" y="185" text-anchor="middle" fill="#fff" font-family="system-ui" font-weight="900" font-size="72">ROAD</text>
+  <text x="256" y="285" text-anchor="middle" fill="#3B82F6" font-family="system-ui" font-weight="900" font-size="84">SENSE</text>
+  <text x="256" y="370" text-anchor="middle" fill="#22C55E" font-family="system-ui" font-weight="700" font-size="48">AI</text>
+  <circle cx="420" cy="92" r="30" fill="#EF4444"/>
+  <path d="M408 92h24M420 80v24" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+</svg>
