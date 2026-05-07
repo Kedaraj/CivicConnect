@@ -721,7 +721,7 @@ function AuthScreen({ onLogin }: { onLogin: () => void }) {
           )}
           {tab === "login" && (
             <>
-              <AuthField icon={Mail} placeholder="Email address" type="email" value={email} onChange={setEmail} />
+              <AuthField icon={Mail} placeholder="Email address" type="text" value={email} onChange={setEmail} />
               {error && <p className="text-red-500 text-[12px] font-medium px-1">{error}</p>}
               <div className="input-field flex items-center gap-3 px-4 py-3.5">
                 <Lock size={15} className="text-zinc-400 shrink-0" />
@@ -759,7 +759,7 @@ function AuthScreen({ onLogin }: { onLogin: () => void }) {
             <>
               <AuthField icon={User} placeholder="Full name" value={name} onChange={setName} />
               <AuthField icon={User} placeholder="Username" />
-              <AuthField icon={Mail} placeholder="Email address" type="email" value={email} onChange={setEmail} />
+              <AuthField icon={Mail} placeholder="Email address" type="text" value={email} onChange={setEmail} />
               <AuthField icon={Phone} placeholder="Phone number" type="tel" />
               <div className="input-field flex items-center gap-3 px-4 py-3.5">
                 <Lock size={15} className="text-zinc-400 shrink-0"/>
