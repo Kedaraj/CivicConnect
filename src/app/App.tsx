@@ -1088,6 +1088,52 @@ function ReportsScreen() {
   const [liveLocation, setLiveLocation] = useState<{lat:number;lng:number;address:string}|null>(null);
   const [locLoading, setLocLoading] = useState(false);
 
+  // Evidence files
+  const [evidenceFiles, setEvidenceFiles] = useState<{data:string;type:string;name:string}[]>([]);
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder|null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, fileType: string) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setEvidenceFiles(prev => [...prev, { data: reader.result as string, type: fileType, name: file.name }]);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleVoiceRecord = async () => {
+    if (isRecording) {
+      mediaRecorderRef.current?.stop();
+      setIsRecording(false);
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      chunksRef.current = [];
+      recorder.ondataavailable = (e) => chunksRef.current.push(e.data);
+      recorder.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        const reader = new FileReader();
+        reader.onload = () => {
+          setEvidenceFiles(prev => [...prev, { data: reader.result as string, type: "voice", name: "voice_recording.webm" }]);
+        };
+        reader.readAsDataURL(blob);
+        stream.getTracks().forEach(t => t.stop());
+      };
+      recorder.start();
+      mediaRecorderRef.current = recorder;
+      setIsRecording(true);
+    } catch { alert("Microphone access denied"); }
+  };
+
+  const removeEvidence = (idx: number) => {
+    setEvidenceFiles(prev => prev.filter((_, i) => i !== idx));
+  };
+
   // Auto-detect GPS on mount
   useEffect(() => {
     detectLocation();
@@ -1118,6 +1164,23 @@ function ReportsScreen() {
     if (!selectedType || !liveLocation) return;
     setLoading(true);
     try {
+      // Upload evidence files first
+      let evidence: {url: string; type: string}[] = [];
+      if (evidenceFiles.length > 0) {
+        try {
+          const API_BASE = import.meta.env.VITE_API_URL || "https://civicconnect-backend-nuz1.onrender.com/api";
+          const token = localStorage.getItem("cc_token");
+          const uploadRes = await fetch(`${API_BASE}/upload/multiple`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+            body: JSON.stringify({ files: evidenceFiles.map(f => ({ data: f.data, type: f.type })) }),
+          });
+          if (uploadRes.ok) {
+            evidence = await uploadRes.json();
+          }
+        } catch (e) { console.warn("Evidence upload failed, continuing without:", e); }
+      }
+
       // Build incident data
       const incidentData: any = {
         type: selectedType,
@@ -1125,6 +1188,7 @@ function ReportsScreen() {
         description: description || `${selectedType} reported at ${liveLocation.address}`,
         location: { lat: liveLocation.lat, lng: liveLocation.lng, address: liveLocation.address },
         priority,
+        evidence,
       };
 
       // Add type-specific metadata to description
@@ -1326,17 +1390,38 @@ function ReportsScreen() {
 
             {/* Evidence (Photo, Video, Voice) */}
             <p className="text-[11px] font-black uppercase tracking-wider text-zinc-400 mb-3">Evidence</p>
-            <div className="flex gap-3 mb-6">
-              {[{Icon:Camera,label:"Photo",accept:"image/*",emoji:"📸"},{Icon:Upload,label:"Video",accept:"video/*",emoji:"🎥"}].map(({Icon,label,accept,emoji})=>(
+            <div className="flex gap-3 mb-3">
+              {[{label:"Photo",accept:"image/*",type:"photo",emoji:"📸"},{label:"Video",accept:"video/*",type:"video",emoji:"🎥"}].map(({label,accept,type,emoji})=>(
                 <label key={label} className="flex-1 bg-zinc-50 border border-zinc-100 rounded-2xl py-4 flex flex-col items-center gap-1.5 cursor-pointer hover:bg-zinc-100 transition-all active:scale-95">
                   <span className="text-lg">{emoji}</span><span className="text-[11px] text-zinc-500 font-semibold">{label}</span>
-                  <input type="file" accept={accept} className="hidden"/>
+                  <input type="file" accept={accept} capture="environment" className="hidden" onChange={(e) => handleFileSelect(e, type)}/>
                 </label>
               ))}
-              <button className="flex-1 bg-zinc-50 border border-zinc-100 rounded-2xl py-4 flex flex-col items-center gap-1.5 hover:bg-zinc-100 transition-all active:scale-95">
-                <span className="text-lg">🎤</span><span className="text-[11px] text-zinc-500 font-semibold">Voice</span>
+              <button onClick={handleVoiceRecord}
+                className={`flex-1 rounded-2xl py-4 flex flex-col items-center gap-1.5 transition-all active:scale-95 border ${isRecording ? "bg-red-50 border-red-300 animate-pulse" : "bg-zinc-50 border-zinc-100 hover:bg-zinc-100"}`}>
+                <span className="text-lg">{isRecording ? "⏹️" : "🎤"}</span>
+                <span className={`text-[11px] font-semibold ${isRecording ? "text-red-500" : "text-zinc-500"}`}>{isRecording ? "Stop" : "Voice"}</span>
               </button>
             </div>
+            {/* Evidence previews */}
+            {evidenceFiles.length > 0 && (
+              <div className="flex gap-2 mb-4 flex-wrap">
+                {evidenceFiles.map((f, i) => (
+                  <div key={i} className="relative group">
+                    {f.type === "photo" ? (
+                      <img src={f.data} className="w-16 h-16 rounded-xl object-cover border border-zinc-200" />
+                    ) : (
+                      <div className="w-16 h-16 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center text-lg">
+                        {f.type === "video" ? "🎥" : "🎤"}
+                      </div>
+                    )}
+                    <button onClick={() => removeEvidence(i)}
+                      className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">✕</button>
+                    <p className="text-[8px] text-zinc-400 text-center mt-0.5 truncate w-16">{f.type}</p>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* Submit Button */}
             <button onClick={handleSubmit} disabled={loading || !liveLocation}
