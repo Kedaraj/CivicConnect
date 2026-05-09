@@ -1391,35 +1391,43 @@ function ReportsScreen() {
             {/* Evidence (Photo, Video, Voice) */}
             <p className="text-[11px] font-black uppercase tracking-wider text-zinc-400 mb-3">Evidence</p>
             <div className="flex gap-3 mb-3">
-              {[{label:"Photo",accept:"image/*",type:"photo",emoji:"📸"},{label:"Video",accept:"video/*",type:"video",emoji:"🎥"}].map(({label,accept,type,emoji})=>(
-                <label key={label} className="flex-1 bg-zinc-50 border border-zinc-100 rounded-2xl py-4 flex flex-col items-center gap-1.5 cursor-pointer hover:bg-zinc-100 transition-all active:scale-95">
-                  <span className="text-lg">{emoji}</span><span className="text-[11px] text-zinc-500 font-semibold">{label}</span>
-                  <input type="file" accept={accept} capture="environment" className="hidden" onChange={(e) => handleFileSelect(e, type)}/>
-                </label>
-              ))}
+              <label className="flex-1 bg-zinc-50 border border-zinc-100 rounded-2xl py-4 flex flex-col items-center gap-1.5 cursor-pointer hover:bg-zinc-100 transition-all active:scale-95 relative">
+                <span className="text-lg">📸</span><span className="text-[11px] text-zinc-500 font-semibold">Photo</span>
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileSelect(e, "photo")}/>
+                {evidenceFiles.filter(f=>f.type==="photo").length > 0 && <span className="absolute top-1 right-1 w-5 h-5 bg-green-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center">{evidenceFiles.filter(f=>f.type==="photo").length}</span>}
+              </label>
+              <label className="flex-1 bg-zinc-50 border border-zinc-100 rounded-2xl py-4 flex flex-col items-center gap-1.5 cursor-pointer hover:bg-zinc-100 transition-all active:scale-95 relative">
+                <span className="text-lg">🎥</span><span className="text-[11px] text-zinc-500 font-semibold">Video</span>
+                <input type="file" accept="video/*" className="hidden" onChange={(e) => handleFileSelect(e, "video")}/>
+                {evidenceFiles.filter(f=>f.type==="video").length > 0 && <span className="absolute top-1 right-1 w-5 h-5 bg-green-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center">{evidenceFiles.filter(f=>f.type==="video").length}</span>}
+              </label>
               <button onClick={handleVoiceRecord}
-                className={`flex-1 rounded-2xl py-4 flex flex-col items-center gap-1.5 transition-all active:scale-95 border ${isRecording ? "bg-red-50 border-red-300 animate-pulse" : "bg-zinc-50 border-zinc-100 hover:bg-zinc-100"}`}>
+                className={`flex-1 rounded-2xl py-4 flex flex-col items-center gap-1.5 transition-all active:scale-95 border relative ${isRecording ? "bg-red-50 border-red-300 animate-pulse" : "bg-zinc-50 border-zinc-100 hover:bg-zinc-100"}`}>
                 <span className="text-lg">{isRecording ? "⏹️" : "🎤"}</span>
-                <span className={`text-[11px] font-semibold ${isRecording ? "text-red-500" : "text-zinc-500"}`}>{isRecording ? "Stop" : "Voice"}</span>
+                <span className={`text-[11px] font-semibold ${isRecording ? "text-red-500" : "text-zinc-500"}`}>{isRecording ? "Recording..." : "Voice"}</span>
+                {evidenceFiles.filter(f=>f.type==="voice").length > 0 && <span className="absolute top-1 right-1 w-5 h-5 bg-green-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center">{evidenceFiles.filter(f=>f.type==="voice").length}</span>}
               </button>
             </div>
             {/* Evidence previews */}
             {evidenceFiles.length > 0 && (
-              <div className="flex gap-2 mb-4 flex-wrap">
-                {evidenceFiles.map((f, i) => (
-                  <div key={i} className="relative group">
-                    {f.type === "photo" ? (
-                      <img src={f.data} className="w-16 h-16 rounded-xl object-cover border border-zinc-200" />
-                    ) : (
-                      <div className="w-16 h-16 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center text-lg">
-                        {f.type === "video" ? "🎥" : "🎤"}
-                      </div>
-                    )}
-                    <button onClick={() => removeEvidence(i)}
-                      className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">✕</button>
-                    <p className="text-[8px] text-zinc-400 text-center mt-0.5 truncate w-16">{f.type}</p>
-                  </div>
-                ))}
+              <div className="bg-green-50 border border-green-200 rounded-2xl p-3 mb-4">
+                <p className="text-[10px] font-bold text-green-600 mb-2">✅ {evidenceFiles.length} file(s) attached</p>
+                <div className="flex gap-2 flex-wrap">
+                  {evidenceFiles.map((f, i) => (
+                    <div key={i} className="relative">
+                      {f.type === "photo" ? (
+                        <img src={f.data} className="w-16 h-16 rounded-xl object-cover border-2 border-green-300" />
+                      ) : (
+                        <div className="w-16 h-16 rounded-xl bg-white border-2 border-green-300 flex items-center justify-center text-lg">
+                          {f.type === "video" ? "🎥" : "🎤"}
+                        </div>
+                      )}
+                      <button onClick={() => removeEvidence(i)}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-[11px] font-bold flex items-center justify-center shadow-md">✕</button>
+                      <p className="text-[8px] text-green-600 text-center mt-0.5 font-bold">{f.type}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
