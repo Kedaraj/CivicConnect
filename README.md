@@ -1,7 +1,7 @@
 
-  # Clone Uber App Frontend
+  # CivicConnect App Frontend
 
-  This is a code bundle for Clone Uber App Frontend. The original project is available at https://www.figma.com/design/qlzpDed4yqUD8AkbFDGIrL/Clone-Uber-App-Frontend.
+  This is a code bundle for CivicConnect App Frontend. The original project is available
 
   ## Running the code
 
