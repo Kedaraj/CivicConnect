@@ -1,11 +1,43 @@
+# CivicConnect
 
-  # Clone Uber App Frontend
+This is a full-stack CivicConnect application with a React frontend and Node.js/Express backend.
 
-  This is a code bundle for Clone Uber App Frontend. The original project is available at https://www.figma.com/design/qlzpDed4yqUD8AkbFDGIrL/Clone-Uber-App-Frontend.
+## Project Structure
 
-  ## Running the code
+```
+├── frontend/    # React + Vite frontend
+├── backend/     # Express + MongoDB backend
+├── guidelines/  # Project guidelines
+└── README.md
+```
 
-  Run `npm i` to install the dependencies.
+## Getting Started
 
-  Run `npm run dev` to start the development server.
-  
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The frontend runs at `http://localhost:5173`
+
+### Backend
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+The backend runs at `http://localhost:3001`
+
+## Default Logins
+
+| Email               | Password     |
+|---------------------|-------------|
+| citizen@civic.com   | password123 |
+| ambulance@civic.com | password123 |
+| police@civic.com    | password123 |
+| admin@civic.com     | password123 |

@@ -629,7 +629,7 @@ function SplashScreen({ onDone }: { onDone: () => void }) {
 const AuthField = ({ icon: Icon, placeholder, type = "text", value = "", onChange = (_v: string) => {} }: { icon: any; placeholder: string; type?: string; value?: string; onChange?: (v: string) => void }) => (
   <div className="input-field flex items-center gap-3 px-4 py-3.5">
     <Icon size={15} className="text-zinc-400 shrink-0" />
-    <input type={type} placeholder={placeholder} value={value} onChange={(e) => onChange(e.target.value)}
+    <input type="text" inputMode={type === "email" ? "email" : type === "tel" ? "tel" : "text"} placeholder={placeholder} value={value} onChange={(e) => onChange(e.target.value)} autoComplete="off"
       className="flex-1 bg-transparent outline-none text-[14px] text-black placeholder:text-zinc-400 font-medium" />
   </div>
 );
